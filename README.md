@@ -1,57 +1,80 @@
-[README.md](https://github.com/user-attachments/files/35454373/README.md)
-# Resume｜Snow 的個人履歷與作品集
+[README.md](https://github.com/user-attachments/files/35454571/README.md)
+# Python 個人理財網站
 
-這是我的個人履歷網站。在同一個網站可以查看我的學經歷、技能、結訓證書和網頁作品。
+用 Python、Flask 和 SQLite 製作的個人理財網站，可在本機記錄現金及台股持倉，並查看資產分布。可以先從履歷上的[靜態展示頁](https://snow-bo.github.io/Resume/python-personal-finance/)瀏覽畫面。
 
-**[開啟線上履歷](https://snow-bo.github.io/Resume/)**
+## 功能
 
-## 網站內容
-
-- **關於 Snow**：個人介紹、學歷和經歷。學歷欄可開啟義守大學畢業證書與產業新尖兵結訓證書。
-- **聯絡方式**：完整履歷、技能專長與聯絡資訊。
-- **日本旅遊網站**：日本旅遊介紹與景點推薦。
-- **圍棋網站**：圍棋的基本介紹與各地圍棋資訊。
-- **Python 個人理財網站**：展示資產表格、圓餅圖、現金表單和股票表單。Flask 與 SQLite 的本機版放在[個人理財專案儲存庫](https://github.com/Snow-Bo/python-personal-finance)。
+- 新增台幣、美金現金紀錄，並刪除單筆現金紀錄。
+- 新增台股買入資料，記錄股數、成交價、手續費和交易稅。
+- 依美元兌台幣匯率換算現金總額，依最近收盤價計算持倉市值、平均成本和報酬率。
+- 以圓餅圖顯示股票庫存占比，以及台幣、美金與股票的資產占比。
 
 ## 開發架構
 
-打開首頁時，瀏覽器先讀取 `index.html`，再載入 `styles` 裡的樣式和程式。點導覽列上的日本旅遊、圍棋或理財作品，瀏覽器就會開啟對應資料夾裡的 HTML。證書也各有一頁，可以從學歷欄開啟。
+假設你在「現金庫存表單」新增一筆台幣 1,000 元，這筆資料會這樣走。
+
+1. 你在瀏覽器填好金額，再按「提交表單」。
+2. Flask 收到金額。`index.py` 把這筆紀錄存進 SQLite 的 `datafile.db`，然後帶你回首頁。
+3. 首頁從資料庫重新讀取現金紀錄，算出加上這筆紀錄後的現金總額。匯率和股票收盤價則是由程式向外部服務查詢。
+4. Jinja2 把算好的金額和紀錄填進首頁的 HTML。程式也會用 Matplotlib 畫出資產比例圖。
 
 ## 使用技術
 
-- **HTML** 放網頁內容，例如履歷表、導覽列和作品頁。
-- **CSS、SCSS** 管理版面、顏色和字型。瀏覽器載入編譯好的 CSS。
-- **JavaScript** 處理捲動時的導覽列陰影。
-- **Bootstrap、Font Awesome** 提供部分排版、按鈕與圖示。
-- **GitHub Pages** 發布網站，讓訪客可以用公開網址瀏覽。
+- **Python** 是撰寫後端程式的語言。
+- **Flask** 處理瀏覽器的請求，例如開啟首頁或接收表單。
+- **SQLite** 保存現金和股票紀錄。Python 透過內建的 `sqlite3` 讀寫 `datafile.db`。
+- **HTML、Jinja2、Bootstrap** 分別負責網頁內容、把後端資料放進網頁，以及表格和按鈕的樣式。
+- **Requests** 讓 Python 查詢匯率和台股收盤價。
+- **Matplotlib** 把計算結果畫成圓餅圖。
 
-## API 串接
+## 專案結構
 
-[Python 個人理財完整版](https://github.com/Snow-Bo/python-personal-finance)使用 Flask 和 Requests 查詢兩個外部 API。查回來的資料會參與資產計算。
+```text
+python-personal-finance/
+├─ index.py          Flask 路由、資產計算、外部 API 與繪圖
+├─ db_setting.py     建立 SQLite 資料庫和資料表
+├─ templates/
+│  ├─ base.html      共用版型與導覽
+│  ├─ index.html     資產總覽
+│  ├─ cash.html      現金表單
+│  └─ stock.html     股票表單
+├─ static/           本機圖表輸出目錄
+└─ datafile.db       首次初始化後在本機產生
+```
 
-- **全球即時匯率 API** 取得美元兌台幣的匯率。程式把美金現金換算成台幣，再與台幣現金加總。
-- **臺灣證券交易所 API** 依股票代號查詢最近可取得的收盤價。程式用收盤價乘上持有股數，計算持倉市值。
+## 下載與本機啟動
 
-資料由 Flask 查詢與計算，履歷裡的靜態理財頁呈現匯出當時的結果。 [查看 API 串接程式](https://github.com/Snow-Bo/python-personal-finance/blob/main/index.py#L41)
+1. 在 [GitHub 儲存庫](https://github.com/Snow-Bo/python-personal-finance)按綠色 **Code → Download ZIP**，或[直接下載 ZIP](https://github.com/Snow-Bo/python-personal-finance/archive/refs/heads/main.zip)。
+2. 解壓縮後，用 VS Code 開啟包含 `index.py` 的資料夾，並在那個資料夾開啟終端機。請先安裝 Python 3。
+3. 安裝專案用到的套件。
 
-## 主要檔案
+   ```powershell
+   python -m pip install flask requests matplotlib
+   ```
 
-| 檔案或資料夾 | 用途 |
-| --- | --- |
-| `index.html` | 網站首頁、個人介紹和作品導覽 |
-| `contact.html` | 履歷詳細資訊與聯絡方式 |
-| `certificates/` | 兩個證書頁和已遮蔽個資的圖片 |
-| `styles/` | 首頁和履歷的樣式及 JavaScript |
-| `img/`、`ICONS/` | 網站使用的圖片和圖示 |
-| `japan/`、`Project of Go/` | 日本旅遊與圍棋作品 |
-| `python-personal-finance/` | 個人理財的靜態展示 |
+4. 如果專案資料夾裡還沒有 `static`，先建立它，讓程式可以存放圖表。
 
-## 下載與使用
+   ```powershell
+   mkdir static
+   ```
 
-1. 在 [GitHub 儲存庫](https://github.com/Snow-Bo/Resume)點綠色 **Code → Download ZIP**，也可以[直接下載 ZIP](https://github.com/Snow-Bo/Resume/archive/refs/heads/main.zip)。
-2. 解壓縮後，保留原本的資料夾結構。
-3. 雙擊最外層的 `index.html`，用瀏覽器開啟首頁，再從導覽列開啟各個作品。
+5. 第一次執行、尚未有 `datafile.db` 時，建立空的資料庫。
 
-## 更新線上履歷
+   ```powershell
+   python db_setting.py
+   ```
 
-GitHub Pages 從 `main` 分支的最外層 `/(root)` 發布網站。修改頁面後，把新版檔案提交到 `main`，等 GitHub Pages 部署完成，就能在原本的網址看到更新。
+6. 啟動 Flask，然後用瀏覽器開啟[本機理財網站](http://127.0.0.1:5000/)。
+
+   ```powershell
+   python index.py
+   ```
+
+## 操作方式
+
+1. 從首頁上方點「現金庫存表單」，輸入金額、備註和日期後提交。
+2. 點「股票庫存表單」，輸入股票代號、股數、買入價及費用後提交。
+3. 回首頁查看現金、股票庫存與資產比例。現金紀錄可以從首頁刪除。
+
+首頁會連線查詢匯率，有股票庫存時也會查詢臺灣證券交易所的收盤價。`datafile.db` 會儲存這台電腦的紀錄，重新啟動程式後仍可以讀取。
