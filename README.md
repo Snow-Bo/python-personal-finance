@@ -1,4 +1,4 @@
-[README.md](https://github.com/user-attachments/files/35454334/README.md)
+[README.md](https://github.com/user-attachments/files/35454373/README.md)
 # Resume｜Snow 的個人履歷與作品集
 
 這是我的個人履歷網站。在同一個網站可以查看我的學經歷、技能、結訓證書和網頁作品。
