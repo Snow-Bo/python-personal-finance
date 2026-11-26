@@ -1,4 +1,3 @@
-[README.md](https://github.com/user-attachments/files/35454571/README.md)
 # Python 個人理財網站
 
 用 Python、Flask 和 SQLite 製作的個人理財網站，可在本機記錄現金及台股持倉，並查看資產分布。可以先從履歷上的[靜態展示頁](https://snow-bo.github.io/Resume/python-personal-finance/)瀏覽畫面。
